@@ -3,10 +3,12 @@ import { OpenMeteo } from '../../Services/open-meteo';
 import { HourlyForecast } from '../../Models/HourlyForecast' ;
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Footer],
+  imports: [Header, Footer, FontAwesomeModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -17,7 +19,9 @@ export class Home {
   //Creamos una señal para que detecte los futuros cambios, en este caso para un array de Hourly Forecasts, cuya interfaz hemos creado
   hourlyForecast = signal<HourlyForecast[]>([]);
   //Creamos una variable que guarde la hora actual
-  currentHour: number = new Date().getHours();
+  currentHour: Date = new Date();
+
+  faLocationDot = faLocationDot;
 
   ngOnInit() {
 

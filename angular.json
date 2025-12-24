@@ -26,7 +26,8 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/css/weather-icons.min.css"
             ]
           },
           "configurations": {
