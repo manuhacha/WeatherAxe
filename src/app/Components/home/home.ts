@@ -20,7 +20,13 @@ export class Home {
   hourlyForecast = signal<HourlyForecast[]>([]);
   //Creamos una variable que guarde la hora actual
   currentHour: Date = new Date();
-
+  //Creamos formateador de texto
+  formatter = new Intl.DateTimeFormat('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+  //Iconos de fontawesome
   faLocationDot = faLocationDot;
 
   ngOnInit() {
