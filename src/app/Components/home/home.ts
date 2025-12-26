@@ -1,14 +1,16 @@
 import { Component, inject, signal } from '@angular/core';
 import { OpenMeteo } from '../../Services/open-meteo';
 import { HourlyForecast } from '../../Models/HourlyForecast' ;
-import { Header } from '../header/header';
-import { Footer } from '../footer/footer';
+import { CurrentWeather  } from '../../Models/CurrentWeather'
+import { Header } from '../Reusable/header/header';
+import { Footer } from '../Reusable/footer/footer';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { ErrorBanner } from '../Reusable/error-banner/error-banner';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Footer, FontAwesomeModule],
+  imports: [Header, Footer, FontAwesomeModule, ErrorBanner],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -18,19 +20,42 @@ export class Home {
   openMeteoService = inject(OpenMeteo);
   //Creamos una señal para que detecte los futuros cambios, en este caso para un array de Hourly Forecasts, cuya interfaz hemos creado
   hourlyForecast = signal<HourlyForecast[]>([]);
-  //Creamos una variable que guarde la hora actual
-  currentHour: Date = new Date();
+  //Creamos una señal para CurrentWeather
+  currentWeather = signal<Partial<CurrentWeather>>({}); //Usamos un Partial para crear objeto vacío y posteriormente rellenarlo
   //Creamos formateador de texto
   formatter = new Intl.DateTimeFormat('es-ES', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
   });
+  error = signal<string | null>(null);
   //Iconos de fontawesome
   faLocationDot = faLocationDot;
 
   ngOnInit() {
+    //Al iniciar cargamos nuestro método
+    this.loadCurrent();
 
+  }
+
+  loadCurrent() {
+    //Ejecutamos nuestro servicio
+    this.openMeteoService.getCurrent(37.42163142300899, -5.96830678499587)
+    .subscribe({
+      next: (res) => {
+        this.currentWeather.set({
+          temperature: Math.round(res.current.temperature_2m),
+          time: new Date(res.current.time)
+        });
+      },
+      error: (err) => {
+        this.error.set('Error loading data');
+        console.log(err);
+      }
+    })
+  }
+
+  loadHourly() {
     //Ejecutamos nuestro servicio
     this.openMeteoService.getForecast(37.42163142300899, -5.96830678499587)
     .subscribe({
@@ -47,7 +72,7 @@ export class Home {
       error: (err) => {
         console.log(err);
       }
-    })
+    });
   }
 
 }
