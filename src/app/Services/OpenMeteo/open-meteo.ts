@@ -27,7 +27,7 @@ export class OpenMeteo {
     const params = {
       latitude: lat,
       longitude: lon,
-      current: 'temperature_2m',
+      current: 'temperature_2m,apparent_temperature,weather_code,is_day',
       timezone: 'auto'
     };
     return this.http.get<any>(this.apiUrl, { params });
