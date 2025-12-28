@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ErrorBanner } from './error-banner';
+import { Spinner } from './spinner';
 
-describe('ErrorBanner', () => {
-  let component: ErrorBanner;
-  let fixture: ComponentFixture<ErrorBanner>;
+describe('Spinner', () => {
+  let component: Spinner;
+  let fixture: ComponentFixture<Spinner>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ErrorBanner]
+      imports: [Spinner]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ErrorBanner);
+    fixture = TestBed.createComponent(Spinner);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
