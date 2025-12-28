@@ -27,7 +27,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/assets/css/weather-icons.min.css"
+              "src/assets/css/weather-icons.min.css",
+              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
             ]
           },
           "configurations": {

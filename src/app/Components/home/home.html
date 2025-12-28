@@ -1,29 +1,32 @@
 <div class="content">
   <app-header></app-header>
   <main>
-    <ErrorBanner [error]="error()"></ErrorBanner>
-    <div class="forecast block md:flex items-center gap-4 border border-zinc-600 rounded-sm text-white w-11/12 lg:w-1/2  xl:w-1/3 py-5 mt-8 px-8 mx-auto">
+    <div class="forecast block md:flex justify-between items-center gap-4 border border-zinc-600 rounded-sm text-white w-11/12 lg:w-8/12 xl:w-5/12 py-5 mt-8 px-8 mx-auto">
+      @if (isLoading()) { <app-spinner class="mx-auto"></app-spinner> }
+      @else if (error()) { <span class="font-bold text-red-600">{{error()}}</span> }
+      @else {
       <div class="current">
         <span class="text-3xl font-medium">Current weather</span>
         <div class="location flex items-center gap-1">
           <fa-icon class="text-2xl fa-width-auto" [icon]="faLocationDot"  />
           <span class="text-2xl">Seville</span>
         </div>
-        <p class="text-xl">{{currentWeather().time ? formatter.format(currentWeather().time) : '-'}}</p>
+        <p class="text-lg">{{currentWeather().time }}</p>
       </div>
       <div class="weather mt-4 lg:mt-0">
-        <div class="flex gap-8">
+        <div class="flex gap-3">
           <i class="text-7xl wi {{currentWeather().icon}}"></i>
             <div class="temperature flex">
-              <p class="text-6xl">{{ currentWeather().temperature ? currentWeather().temperature : '-' }}</p>
+              <p class="text-6xl">{{ currentWeather().temperature  }}</p>
               <span class="text-3xl">ºC</span>
             </div>
             <div class="temperature2">
-              <p class="text-2xl font-bold text-blue-600">{{ currentWeather().weather }}</p>
-              <p class="text-base mt-2">Real feel: {{ currentWeather().apparent_temperature ? currentWeather().apparent_temperature + 'ºC' : '-' }}</p>
+              <p class="text-3xl font-bold text-blue-600">{{ currentWeather().weather }}</p>
+              <p class="text-base mt-2">Real feel: {{ currentWeather().apparent_temperature  + 'ºC' }}</p>
             </div>
         </div>
       </div>
+    }
     </div>
   </main>
   <app-footer></app-footer>
