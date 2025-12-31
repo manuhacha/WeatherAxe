@@ -7,11 +7,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { WeatherCode } from '../../Services/WeatherCode/weather-code';
 import { Spinner } from '../Reusable/spinner/spinner';
-
+import { GeoCoding } from '../../Services/GeoCoding/geo-coding';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Footer, FontAwesomeModule, Spinner],
+  imports: [Header, Footer, FontAwesomeModule, Spinner, ReactiveFormsModule ],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -21,6 +23,12 @@ export class Home {
   openMeteoService = inject(OpenMeteo);
   //Inyectamos nuestro servicio para diferenciar los codigos de tiempo
   weatherCodeService = inject(WeatherCode);
+  //Inyectamos nuestro servicio de busqueda
+  searchService = inject(GeoCoding);
+  //Creamos nuestro control para el search
+  searchControl = new FormControl('');
+  //Creamos nuestro array de resultados
+  results = signal<[]>([]);
   //Creamos una señal para CurrentWeather
   currentWeather = signal<Partial<CurrentWeather>>({}); //Usamos un Partial para crear objeto vacío y posteriormente rellenarlo
   //Creamos variable de error
@@ -33,13 +41,24 @@ export class Home {
   ngOnInit() {
     //Al iniciar cargamos nuestro método
     this.loadCurrent();
+    //Lógica para ls búsqueda de ciudades, se ejecuta cuando cambia el valor del input
+    this.searchControl.valueChanges.pipe(
+      debounceTime(500), //espera 500ms sin escribir
+      distinctUntilChanged() //evita ejecuciones repetidas
+    )
+    //Ejecutamos nuestro metodo de buscar
+    .subscribe(value => {
+      if (value) {
+        this.search(value);
+      }
+    })
   }
 
   loadCurrent() {
     //Mostramos nuestro spinner mientras se cargan los datos
     this.isLoading.set(true);
     //Ejecutamos nuestro servicio
-    this.openMeteoService.getCurrent(37.42163142300899, -5.96830678499587)
+    this.openMeteoService.getCurrent(50.63373, 5.56749)
     .subscribe({
       next: (res) => {
         console.log(res);
@@ -77,6 +96,21 @@ export class Home {
     minute: '2-digit',
     hour12: false
   }).format(date);
+  }
+
+  search(name: string) {
+
+    this.searchService.search(name)
+    .subscribe({
+      next: (res) => {
+        this.results.set(res.results);
+        console.log(this.results());
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+
   }
 
 }

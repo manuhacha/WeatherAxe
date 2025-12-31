@@ -8,11 +8,12 @@ export class GeoCoding {
   
   constructor(private http: HttpClient) {  }
 
-  protected readonly apiUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=Berlin&count=10&language=en&format=json'
+  protected readonly apiUrl = 'https://geocoding-api.open-meteo.com/v1/search'
 
   search(name: string) {
 
     const params = {
+      name: name,
       count: 10,
       language: 'en',
       format: 'json'
