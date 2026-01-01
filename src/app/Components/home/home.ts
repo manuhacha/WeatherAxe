@@ -19,7 +19,6 @@ import { City } from '../../Models/City';
   styleUrl: './home.css',
 })
 export class Home {
-
   //Inyectamos nuestro servicio
   openMeteoService = inject(OpenMeteo);
   //Inyectamos nuestro servicio para diferenciar los codigos de tiempo
@@ -30,20 +29,24 @@ export class Home {
   searchControl = new FormControl('');
   //Creamos nuestro array de resultados
   results = signal<City[]>([]);
-  //Creamos una variable para saber si el usuario ha clickado en alguna búsqueda
-  city = signal<City | null>(null);
   //Creamos una señal para CurrentWeather
   currentWeather = signal<Partial<CurrentWeather>>({}); //Usamos un Partial para crear objeto vacío y posteriormente rellenarlo
   //Creamos variable de error
   error = signal<string | null>(null);
   //Creamos una variable para saber si está cargando
-  isLoading = signal<Boolean>(false);
+  isCurrentLoading = signal<Boolean>(false);
+  isSeachLoading = signal<Boolean>(false);
   //Iconos de fontawesome
   faLocationDot = faLocationDot;
 
   ngOnInit() {
-    //Al iniciar cargamos nuestro método
-    this.loadCurrent(this.city());
+
+    //Cargamos la ciudad guardada en localstorage, si la hay
+    const savedCity = localStorage.getItem('saved_city');
+    if (savedCity) {
+      this.loadCurrent(JSON.parse(savedCity));
+    }
+
     //Lógica para ls búsqueda de ciudades, se ejecuta cuando cambia el valor del input
     this.searchControl.valueChanges.pipe(
       debounceTime(500), //espera 500ms sin escribir
@@ -61,9 +64,12 @@ export class Home {
     })
   }
 
-  loadCurrent(city: any) {
+  loadCurrent(city: City) {
+    //Vaciamos el array de resultados para cuando clicke en alguna ciudad
+    this.results.set([]);
+    this.searchControl.setValue('');
     //Mostramos nuestro spinner mientras se cargan los datos
-    this.isLoading.set(true);
+    this.isCurrentLoading.set(true);
     //Ejecutamos nuestro servicio
     this.openMeteoService.getCurrent(city.latitude,city.longitude)
     .subscribe({
@@ -74,15 +80,18 @@ export class Home {
           apparent_temperature: Math.round(res.current.apparent_temperature),
           //Enviamos el codigo de tiempo para que nuestro servicio nos devuelva el icono y el tiempo actual
           icon: this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day).icon,
-          weather: this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day).weather
+          weather: this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day).weather,
+          city: city.name
         });
+        //Guardamos nuestras coordenadas en localstorage, para que la próxima vez que entre tenga su última búsqueda
+        localStorage.setItem('saved_city', JSON.stringify(city));
         //Estando ya cargados los datos, dejamos de mostrar nuestro spinner
-        this.isLoading.set(false);
+        this.isCurrentLoading.set(false);
       },
       error: (err) => {
         this.error.set('Error loading data');
         //Si hay error también dejamos de mostrar el spinner
-        this.isLoading.set(false);
+        this.isCurrentLoading.set(false);
       }
     })
   }
@@ -105,10 +114,12 @@ export class Home {
   }
 
   search(name: string) {
+    //Mostramos nuestro spinner mientras se cargan los datos
+    this.isSeachLoading.set(true);
     this.searchService.search(name)
     .subscribe({
       next: (res) => {
-        console.log(res)
+        if (res.results) {
         //Hacemos un .map para recorrer la respuesta y pasar los datos a nuestro array de ciudades
         this.results.set(
           res.results.map((result:any) => ({
@@ -119,9 +130,13 @@ export class Home {
             countrycode: result.country_code,
           }))
         );
+        }
+        this.isSeachLoading.set(false);
       },
       error: (err) => {
-        console.log(err);
+        this.error.set('Error loading data');
+        //Si hay error también dejamos de mostrar el spinner
+        this.isSeachLoading.set(false);      
       }
     })
 

@@ -31,7 +31,6 @@
     "@angular/router": "^21.0.0",
     "@fortawesome/angular-fontawesome": "4.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
-    "country-flag-icons": "^1.6.4",
     "ngx-spinner": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
