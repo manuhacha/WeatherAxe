@@ -1,24 +1,14 @@
 <div class="content">
   <app-header></app-header>
   <main>
-    <div class="search w-11/12 lg:w-8/12 xl:w-6/12 mx-auto">
-      <input [formControl]="searchControl" class="mt-8 mx-auto w-full text-white caret-white placeholder-white focus:border-blue-600 focus:outline-none p-2 border border-zinc-600 rounded-sm" type="text" placeholder="Search for a city...">
-        @if (results().length > 0) { 
-          <div class="results mt-2 w-full rounded-sm border border-zinc-600">
-          @for (item of results(); track $index) {
-            <div class="city flex justify-between p-2 cursor-pointer hover:bg-zinc-700 text-white">
-              <p>{{item.name}}</p>
-              <div class="info flex items-center gap-2">
-                <p>{{item.countrycode}}</p>
-                <img class="w-6 h-4" [src]="`/flags/3x2/${item.countrycode}.svg`" alt="">
-              </div>
-            </div>
-          }
-          </div>
+    <div class="search flex justify-center">
+      <input [formControl]="searchControl" class="mt-8 text-white caret-white placeholder-white focus:border-blue-600 focus:outline-none p-2 border border-zinc-600 w-11/12 lg:w-8/12 xl:w-5/12  rounded-sm" type="text" placeholder="Search for a city...">
+      <div class="results">
+        @if (results()) {
         }
+      </div>
     </div>
-    @if (city()) {
-    <div class="forecast block md:flex justify-between items-center gap-4 border border-zinc-600 rounded-sm text-white w-11/12 lg:w-8/12 xl:w-6/12 py-5 my-8 px-8 mx-auto">
+    <div class="forecast block md:flex justify-between items-center gap-4 border border-zinc-600 rounded-sm text-white w-11/12 lg:w-8/12 xl:w-5/12 py-5 mt-8 px-8 mx-auto">
       @if (isLoading()) { <app-spinner class="mx-auto"></app-spinner> }
       @else if (error()) { <span class="font-bold text-red-600">{{error()}}</span> }
       @else {
@@ -45,7 +35,6 @@
       </div>
     }
     </div>
-  }
   </main>
   <app-footer></app-footer>
 </div>

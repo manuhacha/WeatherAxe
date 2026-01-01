@@ -10,7 +10,6 @@ import { Spinner } from '../Reusable/spinner/spinner';
 import { GeoCoding } from '../../Services/GeoCoding/geo-coding';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { City } from '../../Models/City';
 
 @Component({
   selector: 'app-home',
@@ -29,9 +28,7 @@ export class Home {
   //Creamos nuestro control para el search
   searchControl = new FormControl('');
   //Creamos nuestro array de resultados
-  results = signal<City[]>([]);
-  //Creamos una variable para saber si el usuario ha clickado en alguna búsqueda
-  city = signal<City | null>(null);
+  results = signal<[]>([]);
   //Creamos una señal para CurrentWeather
   currentWeather = signal<Partial<CurrentWeather>>({}); //Usamos un Partial para crear objeto vacío y posteriormente rellenarlo
   //Creamos variable de error
@@ -43,7 +40,7 @@ export class Home {
 
   ngOnInit() {
     //Al iniciar cargamos nuestro método
-    this.loadCurrent(this.city());
+    this.loadCurrent();
     //Lógica para ls búsqueda de ciudades, se ejecuta cuando cambia el valor del input
     this.searchControl.valueChanges.pipe(
       debounceTime(500), //espera 500ms sin escribir
@@ -54,20 +51,17 @@ export class Home {
       if (value) {
         this.search(value);
       }
-      //Limpiamos array si no ha escrito nada
-      else {
-        this.results.set([]);
-      }
     })
   }
 
-  loadCurrent(city: any) {
+  loadCurrent() {
     //Mostramos nuestro spinner mientras se cargan los datos
     this.isLoading.set(true);
     //Ejecutamos nuestro servicio
-    this.openMeteoService.getCurrent(city.latitude,city.longitude)
+    this.openMeteoService.getCurrent(50.63373, 5.56749)
     .subscribe({
       next: (res) => {
+        console.log(res);
         this.currentWeather.set({
           temperature: Math.round(res.current.temperature_2m),
           time: this.getCurrentTime(res.timezone),
@@ -105,20 +99,12 @@ export class Home {
   }
 
   search(name: string) {
+
     this.searchService.search(name)
     .subscribe({
       next: (res) => {
-        console.log(res)
-        //Hacemos un .map para recorrer la respuesta y pasar los datos a nuestro array de ciudades
-        this.results.set(
-          res.results.map((result:any) => ({
-            name: result.name,
-            latitude: result.latitude,
-            longitude: result.longitude,
-            elevation: result.elevation,
-            countrycode: result.country_code,
-          }))
-        );
+        this.results.set(res.results);
+        console.log(this.results());
       },
       error: (err) => {
         console.log(err);
