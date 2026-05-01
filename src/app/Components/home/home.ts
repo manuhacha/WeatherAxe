@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { OpenMeteo } from '../../Services/OpenMeteo/open-meteo';
 import { CurrentWeather  } from '../../Models/CurrentWeather'
-import { Header } from '../Reusable/header/header';
-import { Footer } from '../Reusable/footer/footer';
+import { Header } from '../header/header';
+import { Footer } from '../footer/footer';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { WeatherCode } from '../../Services/WeatherCode/weather-code';
-import { Spinner } from '../Reusable/spinner/spinner';
+import { Spinner } from '../spinner/spinner';
 import { GeoCoding } from '../../Services/GeoCoding/geo-coding';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
