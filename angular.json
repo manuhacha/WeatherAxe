@@ -28,7 +28,7 @@
             "styles": [
               "src/styles.css",
               "src/assets/css/weather-icons.min.css",
-              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
+              "node_modules/ngx-toastr/toastr.css"
             ]
           },
           "configurations": {
@@ -56,7 +56,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "options": {"port": 4201},
+          "options": { "port": 4201 },
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
