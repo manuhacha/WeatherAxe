@@ -13,10 +13,12 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { City } from '../../Models/City';
 import { ToastrService } from 'ngx-toastr';
+import { HourlyWeather } from '../../Models/HourlyWeather';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Footer, FontAwesomeModule, Spinner, ReactiveFormsModule],
+  imports: [Header, Footer, FontAwesomeModule, Spinner, ReactiveFormsModule, DatePipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -33,8 +35,10 @@ export class Home {
   results = signal<City[]>([]);
   //Creamos una señal para CurrentWeather
   currentWeather = signal<CurrentWeather | null>(null); //Usamos un Partial para crear objeto vacío y posteriormente rellenarlo
-  //Creamos una señal para HourlyWeather
+  //Creamos una señal para DailyWeather
   dailyWeather = signal<DailyWeather[]>([]);
+  //Creamos una señal para HourlyWeather
+  hourlyWeather = signal<HourlyWeather[]>([]);
   //Creamos variable de error
   error = signal<string | null>(null);
   //Creamos una variable para saber si está cargando
@@ -78,23 +82,37 @@ export class Home {
     //Mostramos nuestro spinner mientras se cargan los datos
     this.isCurrentLoading.set(true);
     //Ejecutamos nuestro servicio
-    this.openMeteoService.getCurrent(city.latitude, city.longitude).subscribe({
+    this.openMeteoService.getCurrent(city.latitude, city.longitude, this.getCurrentTime(city.timezone)).subscribe({
       next: (res) => {
+        console.log(res);
+        //Enviamos el codigo de tiempo para que nuestro servicio nos devuelva el icono y el tiempo actual
+        const weatherData = this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day);
         this.currentWeather.set({
           temperature: Math.round(res.current.temperature_2m),
-          time: this.getCurrentTime(res.timezone),
+          time: this.getCurrentTime(city.timezone),
           apparent_temperature: Math.round(res.current.apparent_temperature),
-          //Enviamos el codigo de tiempo para que nuestro servicio nos devuelva el icono y el tiempo actual
-          icon: this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day).icon,
-          weather: this.weatherCodeService.getWeatherCode(res.current.weather_code,res.current.is_day,).weather,
+          icon: weatherData.icon,
+          weather: weatherData.weather,
           city: city.name,
         });
+        this.hourlyWeather.set(
+          res.hourly.time.map((time: Date, i: number): HourlyWeather => {
+          const weatherData = this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true);
+            return {
+              time: res.hourly.time[i],
+              temperature: res.hourly.temperature_2m[i],
+              weather: weatherData.weather,
+              icon: weatherData.icon
+            }
+          })
+        )
+
+        console.log(this.hourlyWeather())
 
         //Obtenemos el tiempo de los días de la semana
         this.dailyWeather.set(
           res.daily.time.map((time: Date, i: number): DailyWeather => {
             const weatherData = this.weatherCodeService.getWeatherCode(res.daily.weather_code[i], true);
-
             return {
               day: new Date(time).toLocaleDateString('en-US', {weekday: 'long'}),
               weather: weatherData.weather,
@@ -103,8 +121,6 @@ export class Home {
               icon: weatherData.icon
             }
           }));  
-
-        console.log(this.dailyWeather());
 
         //Guardamos nuestras coordenadas en localstorage, para que la próxima vez que entre tenga su última búsqueda
         localStorage.setItem('saved_city', JSON.stringify(city));
@@ -115,25 +131,17 @@ export class Home {
         this.toastr.error('Error loading data');
         //Si hay error también dejamos de mostrar el spinner
         this.isCurrentLoading.set(false);
+        console.log(err)
       },
     });
   }
 
-  //Función para rescatar el tiempo actual en base al timezone que devuelve la api
-  getCurrentTime(timeZone: string): string {
-    //Devolvemos '' si timeZone no existe
-    if (!timeZone) {
-      return '';
-    }
-    //Creamos una variable para guardar el tiempo
-    const date = new Date();
-    //Devolvemos texto formateado
-    return new Intl.DateTimeFormat('es-ES', {
-      timeZone: timeZone,
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).format(date);
+  //Función para rescatar la fecha actual en base al timezone que devuelve la api de ciudades
+  getCurrentTime(timeZone: string): Date {
+    const date = new Date(
+      new Date().toLocaleDateString('en-US', {timeZone})
+    )
+    return date;
   }
 
   search(name: string) {
@@ -141,6 +149,7 @@ export class Home {
     this.isSeachLoading.set(true);
     this.searchService.search(name).subscribe({
       next: (res) => {
+        console.log(res.results);
         if (res.results) {
           //Hacemos un .map para recorrer la respuesta y pasar los datos a nuestro array de ciudades
           this.results.set(
@@ -150,6 +159,7 @@ export class Home {
               longitude: result.longitude,
               elevation: result.elevation,
               countrycode: result.country_code,
+              timezone: result.timezone
             })),
           );
         }
@@ -159,7 +169,6 @@ export class Home {
         this.toastr.error('Error loading data');
         //Si hay error también dejamos de mostrar el spinner
         this.isSeachLoading.set(false);
-        console.log(err);
       },
     });
   }

@@ -1,6 +1,6 @@
 export interface CurrentWeather {
     temperature: number,
-    time: string,
+    time: Date | null,
     apparent_temperature: number,
     weather: string,
     icon: string,

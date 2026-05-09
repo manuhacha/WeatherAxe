@@ -4,4 +4,5 @@ export interface City {
     longitude: number,
     elevation: number,
     countrycode: string,
+    timezone: string
 }
