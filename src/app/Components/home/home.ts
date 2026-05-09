@@ -15,6 +15,7 @@ import { City } from '../../Models/City';
 import { ToastrService } from 'ngx-toastr';
 import { HourlyWeather } from '../../Models/HourlyWeather';
 import { DatePipe } from '@angular/common';
+import { DateTime } from "luxon";
 
 @Component({
   selector: 'app-home',
@@ -82,7 +83,7 @@ export class Home {
     //Mostramos nuestro spinner mientras se cargan los datos
     this.isCurrentLoading.set(true);
     //Ejecutamos nuestro servicio
-    this.openMeteoService.getCurrent(city.latitude, city.longitude, this.getCurrentTime(city.timezone)).subscribe({
+    this.openMeteoService.getCurrent(city.latitude, city.longitude).subscribe({
       next: (res) => {
         console.log(res);
         //Enviamos el codigo de tiempo para que nuestro servicio nos devuelva el icono y el tiempo actual
@@ -138,10 +139,7 @@ export class Home {
 
   //Función para rescatar la fecha actual en base al timezone que devuelve la api de ciudades
   getCurrentTime(timeZone: string): Date {
-    const date = new Date(
-      new Date().toLocaleDateString('en-US', {timeZone})
-    )
-    return date;
+    return DateTime.now().setZone(timeZone).toJSDate();
   }
 
   search(name: string) {

@@ -1,5 +1,5 @@
 export interface HourlyWeather {
-    time: string,
+    time: Date,
     weather: string,
     icon: string,
     temperature: string,
