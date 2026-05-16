@@ -13,11 +13,6 @@ export class OpenMeteo {
 
   //Función para obtener el clima actual
   getCurrent(lat: number, lon: number) {
-    //Obtenemos el día actual y le sumamos un día para establecer rangos en el forecast por hora
-    // const currentDay = date.toISOString().split('T')[0];
-    // const nextDate = new Date(date);
-    // nextDate.setDate(nextDate.getDate() + 1);
-    // const nextDay = nextDate.toISOString().split('T')[0];
     const params = {
       latitude: lat,
       longitude: lon,

@@ -7,7 +7,6 @@ import { Footer } from '../footer/footer';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { WeatherCode } from '../../Services/WeatherCode/weather-code';
-import { Spinner } from '../spinner/spinner';
 import { GeoCoding } from '../../Services/GeoCoding/geo-coding';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -16,10 +15,11 @@ import { ToastrService } from 'ngx-toastr';
 import { HourlyWeather } from '../../Models/HourlyWeather';
 import { DatePipe } from '@angular/common';
 import { DateTime } from "luxon";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Footer, FontAwesomeModule, Spinner, ReactiveFormsModule, DatePipe],
+  imports: [Header, Footer, FontAwesomeModule, ReactiveFormsModule, DatePipe, MatProgressSpinnerModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -66,7 +66,6 @@ export class Home {
       //Ejecutamos nuestro metodo de buscar
       .subscribe((value) => {
         if (value) {
-          this.currentWeather.set(null);
           this.search(value);
         }
         //Limpiamos array si no ha escrito nada
@@ -85,7 +84,6 @@ export class Home {
     //Ejecutamos nuestro servicio
     this.openMeteoService.getCurrent(city.latitude, city.longitude).subscribe({
       next: (res) => {
-        console.log(res);
         //Enviamos el codigo de tiempo para que nuestro servicio nos devuelva el icono y el tiempo actual
         const weatherData = this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day);
         this.currentWeather.set({
@@ -96,19 +94,24 @@ export class Home {
           weather: weatherData.weather,
           city: city.name,
         });
-        this.hourlyWeather.set(
-          res.hourly.time.map((time: Date, i: number): HourlyWeather => {
-          const weatherData = this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true);
-            return {
-              time: res.hourly.time[i],
-              temperature: res.hourly.temperature_2m[i],
-              weather: weatherData.weather,
-              icon: weatherData.icon
-            }
-          })
-        )
 
-        console.log(this.hourlyWeather())
+        //Metemos los pronosticos por hora en un array de Objetos
+        const hourly: HourlyWeather[] = res.hourly.time.map((time: Date, i: number) => ({
+          time,
+          temperature: Math.round(res.hourly.temperature_2m[i]),
+          icon: this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true).icon,
+          weather: this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true).weather
+        }));
+        
+        //Filtramos el array para sólo quedarnos con el pronóstico de las horas posteriores a la actual del timezone de la ciudad 
+        // seleccionada por el usuario y para quedarnos con el pronóstico del día actual y el siguiente 
+        const filtered: HourlyWeather[] = hourly.filter(
+          (forecast:any) => (
+            this.getCurrentTime(city.timezone).toMillis() < DateTime.fromISO(forecast.time, { zone: city.timezone }).toMillis()
+            && this.getCurrentTime(city.timezone).plus({ day: 1 }).day >= DateTime.fromISO(forecast.time, { zone: city.timezone }).day
+          ))
+
+        this.hourlyWeather.set(filtered);
 
         //Obtenemos el tiempo de los días de la semana
         this.dailyWeather.set(
@@ -138,8 +141,8 @@ export class Home {
   }
 
   //Función para rescatar la fecha actual en base al timezone que devuelve la api de ciudades
-  getCurrentTime(timeZone: string): Date {
-    return DateTime.now().setZone(timeZone).toJSDate();
+  getCurrentTime(timeZone: string): DateTime {
+    return DateTime.now().setZone(timeZone);
   }
 
   search(name: string) {

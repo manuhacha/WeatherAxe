@@ -26,6 +26,7 @@
               }
             ],
             "styles": [
+              "src/material-theme.scss",
               "src/styles.css",
               "src/assets/css/weather-icons.min.css",
               "node_modules/ngx-toastr/toastr.css"
