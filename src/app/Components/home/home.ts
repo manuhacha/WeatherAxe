@@ -88,7 +88,7 @@ export class Home {
         const weatherData = this.weatherCodeService.getWeatherCode(res.current.weather_code, res.current.is_day);
         this.currentWeather.set({
           temperature: Math.round(res.current.temperature_2m),
-          time: this.getCurrentTime(city.timezone),
+          time: this.getCurrentTime(city.timezone).toFormat('HH:mm a'),
           apparent_temperature: Math.round(res.current.apparent_temperature),
           icon: weatherData.icon,
           weather: weatherData.weather,
