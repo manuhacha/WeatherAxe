@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 
 export interface CurrentWeather {
     temperature: number,
-    time: DateTime,
+    time: string,
     apparent_temperature: number,
     weather: string,
     icon: string,
