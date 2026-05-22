@@ -6,6 +6,7 @@ import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { WeatherCode } from '../../Services/WeatherCode/weather-code';
 import { GeoCoding } from '../../Services/GeoCoding/geo-coding';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -47,6 +48,7 @@ export class Home {
   isSeachLoading = signal<Boolean>(false);
   //Iconos de fontawesome
   faLocationDot = faLocationDot;
+  faMagnifyingGlass = faMagnifyingGlass;
   //Inyectamos nuestro servicio de toasts
   toastr = inject(ToastrService);
 
@@ -164,7 +166,7 @@ export class Home {
             })),
           );
         }
-        this.isSeachLoading.set(false);
+        this.isSeachLoading.set(true);
       },
       error: (err) => {
         this.toastr.error('Error loading data');

@@ -1,24 +1,22 @@
 <div class="content">
   <app-header></app-header>
   <main>
-    <div class="search w-11/12 lg:w-8/12 mx-auto">
+    <div class="search w-11/12 lg:w-8/12 mt-8 mx-auto border border-zinc-600 rounded-2xl items-center overflow-hidden">
+      <div class="flex p-2">
       <input
         [formControl]="searchControl"
-        class="mt-8 mx-auto w-full text-white caret-white placeholder-white focus:border-blue-600 focus:outline-none p-2 border border-zinc-600 rounded-sm"
+        class="mx-auto w-full text-white caret-white placeholder-white focus:outline-0"
         type="text"
         placeholder="Search for a city..."
       />
-      @if (isSeachLoading()) {
-        <div class="flex justify-center mt-4">
-          <mat-spinner [diameter]="50"></mat-spinner>
-        </div>
-      } @else {
+      <fa-icon class="text-base fa-width-auto text-white" [icon]="faMagnifyingGlass" />
+      </div>
         @if (results().length > 0) {
-          <div class="results mt-2 w-full rounded-sm border border-zinc-600">
+          <div class="results w-full border-t border-zinc-600 bg-[#09090B]">
             @for (item of results(); track $index) {
               <div
                 (click)="loadCurrent(item)"
-                class="city flex justify-between p-2 cursor-pointer hover:bg-zinc-700 text-white"
+                class="city flex justify-between p-2 cursor-pointer hover:bg-zinc-900 text-white"
               >
                 <p>{{ item.name }}</p>
                 <div class="info flex items-center gap-2">
@@ -29,16 +27,15 @@
             }
           </div>
         }
-      }
     </div>
       @if (isCurrentLoading()) {
         <div class="flex items-center justify-center h-6/12">
           <mat-spinner [diameter]="50"></mat-spinner>
         </div>
       }
-      @else {
+      @else if (currentWeather()) {
       <div
-        class="forecast block md:flex justify-between items-center gap-4 border border-zinc-600 rounded-sm text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto"
+        class="forecast block md:flex justify-between items-center gap-4 border border-zinc-600 rounded-2xl text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto"
       >
         <div class="current">
           <span class="text-3xl font-medium">Current weather</span>
@@ -52,7 +49,7 @@
           <div class="flex gap-3">
             <i class="text-7xl wi {{ currentWeather()?.icon }}"></i>
             <div class="temperature flex">
-              <p class="text-6xl">{{ currentWeather()?.temperature }}<sup class="text-4xl">ºC</sup></p>
+              <p class="text-6xl">{{ currentWeather()?.temperature }}<span class="text-4xl align-super">ºC</span></p>
             </div>
             <div class="temperature2">
               <p class="text-2xl font-bold text-blue-600">{{ currentWeather()?.weather }}</p>
@@ -62,7 +59,7 @@
         </div>
       </div>
 
-      <div class="hourlyforecast border border-zinc-600 rounded-sm text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto">
+      <div class="hourlyforecast border border-zinc-600 rounded-2xl text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto">
         <span class="text-3xl font-medium">Hourly forecast</span>
         <div class="flex gap-4 mt-4 overflow-x-auto pb-5">
           @for (forecast of hourlyWeather(); track $index) {
@@ -80,7 +77,7 @@
         </div>
       </div>
 
-      <div class="dailyforecast border border-zinc-600 rounded-sm text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto">
+      <div class="dailyforecast border border-zinc-600 rounded-2xl text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto">
         <span class="text-3xl font-medium">Weekly forecast</span>
         <div class="flex gap-4 mt-4 overflow-x-auto pb-5 md:pb-0">
           @for (forecast of dailyWeather(); track $index) {

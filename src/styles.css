@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 @import "tailwindcss";
 @import 'ngx-toastr/toastr';
 
@@ -15,8 +16,14 @@ main {
     min-height: 0;
 }
 
+mat-spinner circle, mat-spinner circle {
+stroke: oklch(54.6% 0.245 262.881);
+}
+
+
 html, body {
   background-color: #09090B; 
+  font-family: "Inter", sans-serif;
 }
 
 ::-webkit-scrollbar {
