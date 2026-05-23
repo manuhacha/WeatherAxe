@@ -102,7 +102,8 @@ export class Home {
           time,
           temperature: Math.round(res.hourly.temperature_2m[i]),
           icon: this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true).icon,
-          weather: this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true).weather
+          weather: this.weatherCodeService.getWeatherCode(res.hourly.weather_code[i], true).weather,
+          precipitation_probability: res.hourly.precipitation_probability[i]
         }));
         
         //Filtramos el array para sólo quedarnos con el pronóstico de las horas posteriores a la actual del timezone de la ciudad 
@@ -114,6 +115,7 @@ export class Home {
           ))
 
         this.hourlyWeather.set(filtered);
+        console.log(this.hourlyWeather());
 
         //Obtenemos el tiempo de los días de la semana
         this.dailyWeather.set(

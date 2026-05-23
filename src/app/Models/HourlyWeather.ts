@@ -3,4 +3,5 @@ export interface HourlyWeather {
     weather: string,
     icon: string,
     temperature: number,
+    precipitation_probability: number
 }
