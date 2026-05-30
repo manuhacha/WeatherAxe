@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { GeoCodingAPIResponse } from '../../Models/Responses/GeoCodingAPIResponse';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeoCoding {
   
-  constructor(private http: HttpClient) {  }
+  private http = inject(HttpClient);
 
   protected readonly apiUrl = 'https://geocoding-api.open-meteo.com/v1/search'
 
@@ -19,6 +20,6 @@ export class GeoCoding {
       format: 'json'
     }
 
-    return this.http.get<any>(this.apiUrl, { params })
+    return this.http.get<GeoCodingAPIResponse>(this.apiUrl, { params });
   }
 }

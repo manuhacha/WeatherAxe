@@ -1,4 +1,4 @@
-export interface DailyWeather {
+export interface DailyWeatherData {
     day: string,
     weather: string,
     max_temperature: number,
