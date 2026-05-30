@@ -1,0 +1,17 @@
+<div class="content">
+  <app-header></app-header>
+  <main>
+    <app-search (city)="receiveCityData($event)"></app-search>
+    @if (isCurrentLoading()) {
+      <div class="flex items-center justify-center h-6/12">
+        <mat-spinner [diameter]="50"></mat-spinner>
+      </div>
+    } 
+    @else if (openMeteoApiResponse()) {
+      <app-current-weather [data]="openMeteoApiResponse()" [city]="city()"></app-current-weather>
+      <app-weekly-weather [data]="openMeteoApiResponse()" [city]="city()"></app-weekly-weather>
+      <app-daily-weather [data]="openMeteoApiResponse()"></app-daily-weather>
+    }
+  </main>
+  <app-footer></app-footer>
+</div>

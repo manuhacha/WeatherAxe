@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { OpenMeteoAPIResponse } from '../../Models/Responses/OpenMeteoAPIResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -7,12 +8,12 @@ import { Injectable } from '@angular/core';
 export class OpenMeteo {
   
   //Insertamos el cliente http
-  constructor(private http: HttpClient) {  }
+  private http = inject(HttpClient);
   //Creamos nuestra url
   private readonly apiUrl = 'https://api.open-meteo.com/v1/forecast';
 
   //Función para obtener el clima actual
-  getCurrent(lat: number, lon: number) {
+  getWeather(lat: number, lon: number) {
     const params = {
       latitude: lat,
       longitude: lon,
@@ -21,7 +22,7 @@ export class OpenMeteo {
       hourly: `temperature_2m,weather_code,precipitation_probability`,
       timezone: 'auto',
     };
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<OpenMeteoAPIResponse>(this.apiUrl, { params });
   }
 
 }

@@ -1,6 +1,4 @@
-import { DateTime } from "luxon";
-
-export interface CurrentWeather {
+export interface CurrentWeatherData {
     temperature: number,
     time: string,
     apparent_temperature: number,

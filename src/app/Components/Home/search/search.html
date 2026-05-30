@@ -1,0 +1,20 @@
+<div [ngClass]="{'focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition' : results().length < 1}" class="search w-11/12 lg:w-8/12 mt-8 mx-auto border border-zinc-600 rounded-xl items-center overflow-hidden">
+  <div class="flex p-2 items-center">
+    <input [formControl]="searchControl" class="mx-auto w-full text-white caret-white placeholder-white focus:outline-none p-1 bg-transparent" type="text" placeholder="Search for a city..."/>
+    <fa-icon class="text-base fa-width-auto text-white" [icon]="faMagnifyingGlass" />
+  </div>
+
+  @if (results().length > 0) {
+    <div class="results w-full border-t border-zinc-600 bg-[#09090B]">
+      @for (item of results(); track $index) {
+        <div (click)="getCityData(item)" class="city flex justify-between p-3 cursor-pointer hover:bg-zinc-900 text-white">
+          <p>{{ item.name }}</p>
+          <div class="info flex items-center gap-2">
+            <p>{{ item.country_code }}</p>
+            <img class="w-6 h-4" [src]="`/flags/3x2/${item.country_code}.svg`" alt="" />
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
