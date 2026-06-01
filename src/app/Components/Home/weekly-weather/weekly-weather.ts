@@ -5,11 +5,12 @@ import { HourlyWeather } from '../../../Models/HourlyWeather';
 import { Time } from '../../../Services/Time/time';
 import { DateTime } from 'luxon';
 import { WeatherCode } from '../../../Services/WeatherCode/weather-code';
-import { DatePipe } from '@angular/common';
+import { Chart } from "../chart/chart";
+import { DatePipe, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-weekly-weather',
-  imports: [DatePipe],
+  imports: [Chart, NgClass, DatePipe],
   templateUrl: './weekly-weather.html',
   styleUrl: './weekly-weather.css',
 })
@@ -23,9 +24,12 @@ export class WeeklyWeather {
   timeService = inject(Time);
   //Inyectamos servicio de código de tiempo
   weatherCodeService = inject(WeatherCode);
+  //Signal para el estado del toggle de charts
+  protected readonly toggleValue = signal<'basic' | 'chart'>('basic');
 
   ngOnInit() {
     this.loadWeekly();
+    console.log(this.toggleValue())
   }
 
   loadWeekly() {
@@ -51,7 +55,8 @@ export class WeeklyWeather {
       temperature: Math.round(data.hourly.temperature_2m[i]),
       icon: weather.icon,
       weather: weather.weather,
-      precipitation_probability: data.hourly.precipitation_probability[i]
+      precipitation_probability: data.hourly.precipitation_probability[i],
+      precipitation: data.hourly.precipitation[i]
     };
     });
 
@@ -67,5 +72,10 @@ export class WeeklyWeather {
     });
 
     this.hourlyWeather.set(filteredForecast);
+  }
+
+  //Funcion para cambiar el estado del toggle
+  selectOption(option: 'basic' | 'chart') {
+    this.toggleValue.set(option);
   }
 }
