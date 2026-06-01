@@ -49,3 +49,14 @@ html, body {
 ::-webkit-scrollbar-corner {
   background: #18181b;
 }
+
+/* Charts */
+.apexcharts-toolbar, .apexcharts-menu {
+  background-color: oklch(21% 0.006 285.885) !important  ;
+}
+.apexcharts-toolbar:hover, .apexcharts-menu-item:hover {
+  background-color: oklch(27.4% 0.006 286.033) !important  ;
+}
+.apexcharts-menu-icon svg {
+  stroke: white !important;
+}

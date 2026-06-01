@@ -1,6 +1,14 @@
-      <div class="hourlyforecast border border-zinc-600 rounded-xl text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto">
-        <span class="text-3xl font-medium">Hourly forecast</span>
-        <div class="flex gap-4 mt-4 overflow-x-auto pb-5">
+<div class="hourlyforecast border border-zinc-600 rounded-xl text-white w-11/12 lg:w-8/12 py-5 my-8 px-8 mx-auto">
+  <div class="overflow-x-auto">
+    <div class="flex items-center justify-between">
+      <span class="text-3xl font-medium">Hourly forecast</span>
+      <div class="flex items-center gap-2">
+        <button [ngClass]="toggleValue() === 'basic' ? 'bg-blue-600' : 'bg-zinc-800 hover:bg-zinc-700'" (click)="selectOption('basic')" class="px-3 py-1 rounded-xl">Basic</button>
+        <button [ngClass]="toggleValue() === 'chart' ? 'bg-blue-600' : 'bg-zinc-800 hover:bg-zinc-700'" (click)="selectOption('chart')" class="px-3 py-1 rounded-xl">Chart</button>
+      </div>
+    </div>
+    @if (toggleValue() === 'basic') {
+      <div class="flex gap-4 mt-4 overflow-x-auto pb-5">
           @for (forecast of hourlyWeather(); track $index) {
             @if (forecast) {
             <div class="forecast w-full text-center">
@@ -18,4 +26,9 @@
             }
           }
         </div>
-      </div>
+    }
+    @else if (toggleValue() === 'chart') {
+      <app-chart [data]="hourlyWeather()"></app-chart>
+    }
+  </div>
+</div>

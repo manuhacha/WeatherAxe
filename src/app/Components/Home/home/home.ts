@@ -18,7 +18,7 @@ import { WeeklyWeather } from '../weekly-weather/weekly-weather';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
+export class Home { 
   //Inyectamos nuestro servicio
   private openMeteoService = inject(OpenMeteo);
   //Creamos una variable para saber si está cargando
