@@ -17,4 +17,4 @@ RUN npm run build -- --configuration production
 RUN npm install -g serve
 
 # Cambia "your-app-name" por el nombre real en angular.json (dist/)
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["serve", "-s", "dist/WeatherAxe", "-l", "3000"]
