@@ -13,4 +13,4 @@ RUN npm install -g serve
 WORKDIR /app
 COPY --from=build /app/dist /app/dist
 
-CMD ["serve", "-s", "dist/WeatherAxe", "-l", "3000"]
+CMD ["serve", "-s", "dist/WeatherAxe/browser", "-l", "3000"]
