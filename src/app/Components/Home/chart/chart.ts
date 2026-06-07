@@ -89,7 +89,7 @@ export class Chart {
 
   public chartOptions: Partial<ChartOptions> = {
     chart: {
-      width: '2000',
+      width: '1500',
       type: 'area',
       fontFamily: 'Inter, sans-serif',
       height: 350,
@@ -97,6 +97,9 @@ export class Chart {
         enabled: false,
       },
       foreColor: 'white',
+      toolbar: {
+        show: false
+      }
     },
     dataLabels: {
       enabled: false,
