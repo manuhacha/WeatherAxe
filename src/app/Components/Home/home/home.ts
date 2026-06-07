@@ -56,7 +56,6 @@ export class Home {
         this.toastr.error('Error loading data');
         //Si hay error también dejamos de mostrar el spinner
         this.isCurrentLoading.set(false);
-        console.log(err)
       },
     });
   }

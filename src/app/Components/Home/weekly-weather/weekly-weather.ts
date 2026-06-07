@@ -29,7 +29,6 @@ export class WeeklyWeather {
 
   ngOnInit() {
     this.loadWeekly();
-    console.log(this.toggleValue())
   }
 
   loadWeekly() {
