@@ -20,7 +20,7 @@ import {
   ApexTheme,
   NgApexchartsModule,
 } from 'ng-apexcharts';
-import { HourlyWeather } from '../../../Models/HourlyWeather';
+import { HourlyWeatherData } from '../../../Models/HourlyWeatherData';
 
 export type ChartOptions = {
   series?: ApexAxisChartSeries | ApexNonAxisChartSeries;
@@ -53,7 +53,7 @@ export type ChartOptions = {
 })
 export class Chart {
   //Creamos un input para que el componente padre pase los datos
-  @Input() data:HourlyWeather[] = [];
+  @Input() data:HourlyWeatherData[] = [];
   //Creamos arrays de temperaturas y fechas para pasar al chart
   protected readonly temperatures = signal<number[]>([]);
   protected readonly dates = signal<string[]>([]);

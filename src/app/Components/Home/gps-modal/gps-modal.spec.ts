@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DailyWeather } from './weekly-weather';
+import { GpsModal } from './gps-modal';
 
-describe('DailyWeather', () => {
-  let component: DailyWeather;
-  let fixture: ComponentFixture<DailyWeather>;
+describe('GpsModal', () => {
+  let component: GpsModal;
+  let fixture: ComponentFixture<GpsModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DailyWeather]
+      imports: [GpsModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DailyWeather);
+    fixture = TestBed.createComponent(GpsModal);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

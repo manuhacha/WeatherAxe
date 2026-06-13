@@ -12,7 +12,8 @@ export interface OpenMeteoAPIResponse {
         temperature_2m: number[],
         weather_code: number[],
         precipitation_probability: number[],
-        precipitation: number[]
+        precipitation: number[],
+        is_day: boolean[]
     },
     daily: {
         time: Date[],
