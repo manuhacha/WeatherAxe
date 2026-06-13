@@ -1,0 +1,30 @@
+@if (isLoading()) {
+      <div class="flex items-center justify-center h-6/12">
+        <mat-spinner [diameter]="50"></mat-spinner>
+      </div>
+}
+@else {
+    <div class="w-10/12 md:w-4/12 px-10 py-5 text-white absolute mt-8 left-1/2 -translate-x-1/2 bg-zinc-900 rounded-xl">
+    <div class="flex gap-2 items-center">
+        <fa-icon class="text-2xl fa-width-auto" [icon]="faLocationDot" />
+        <p class="text-xl font-bold">
+            Enable location access?
+        </p>
+    </div>
+
+    <p class="text-sm text-zinc-400 mt-3">
+    WeatherAxe uses your location to provide accurate weather forecasts for your area.
+    Your coordinates are stored locally on your device so the app can remember your location
+    and load weather data faster on future visits.
+    </p>
+
+    <div class="buttons flex gap-2 mt-5">
+        <button (click)="getGPSLocation(true)" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-500">
+            Yes
+        </button>
+        <button (click)="getGPSLocation(false)" class="px-3 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700">
+            No
+        </button>
+    </div>
+</div>
+}

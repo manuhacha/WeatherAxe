@@ -1,80 +1,44 @@
+import { WeeklyWeatherData } from '../../../Models/WeeklyWeatherData';
 import { Component, inject, Input, signal } from '@angular/core';
 import { OpenMeteoAPIResponse } from '../../../Models/Responses/OpenMeteoAPIResponse';
-import { City } from '../../../Models/City';
-import { HourlyWeather } from '../../../Models/HourlyWeather';
-import { Time } from '../../../Services/Time/time';
-import { DateTime } from 'luxon';
 import { WeatherCode } from '../../../Services/WeatherCode/weather-code';
-import { Chart } from "../chart/chart";
-import { DatePipe, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-weekly-weather',
-  imports: [Chart, NgClass, DatePipe],
+  imports: [],
   templateUrl: './weekly-weather.html',
   styleUrl: './weekly-weather.css',
 })
 export class WeeklyWeather {
-  //Creamos una señal para HourlyWeather
-  protected readonly hourlyWeather = signal<HourlyWeather[]>([]);
-  //Creamos nuestros inputs para que el componente padre nos pase
+
+  //Creamos nuestro input para que el componente padre envíe datos
   @Input() data:OpenMeteoAPIResponse | null = null;
-  @Input() city:City | null = null;
-  //Inyectamos servicio de tiempo
-  timeService = inject(Time);
-  //Inyectamos servicio de código de tiempo
+  //Creamos nuestro array con el tiempo por días
+  protected readonly dailyWeather = signal<WeeklyWeatherData[]>([]);
+  //Inyectamos nuestro servicio de WeatherCode
   weatherCodeService = inject(WeatherCode);
-  //Signal para el estado del toggle de charts
-  protected readonly toggleValue = signal<'basic' | 'chart'>('basic');
 
   ngOnInit() {
-    this.loadWeekly();
+    this.loadDaily();
   }
 
-  loadWeekly() {
-    if (!this.data || !this.city) return;
+  loadDaily() {
+    if (!this.data) return;
 
-    //Rescatamos el tiempo actual en base al timezone de la ciudad
-    const now = this.timeService.getCurrentTime(this.city.timezone);
-    //Le sumamos 1 día y ponemos la hora a las 23:00
-    const endOfTomorrow = now
-      .plus({ days: 1 })
-      .set({ hour: 23, minute: 0, second: 0, millisecond: 0 });
+    const daily = this.data.daily;
 
-    //Guardamos los datos y la ciudad que nos envía el componente padre
-    const data = this.data;
-    const city = this.city;
-
-    //Metemos los pronósticos en un array para poder filtrar después
-    const hourlyForecast: HourlyWeather[] = data.hourly.time.map((time, i) => {
-      const weather = this.weatherCodeService.getWeatherCode(data.hourly.weather_code[i], true);
-
-      return {
-      time,
-      temperature: Math.round(data.hourly.temperature_2m[i]),
-      icon: weather.icon,
-      weather: weather.weather,
-      precipitation_probability: data.hourly.precipitation_probability[i],
-      precipitation: data.hourly.precipitation[i]
-    };
-    });
-
-    //Filtramos para devolver sólo el día actual y el siguiente
-    const filteredForecast = hourlyForecast.filter(forecast => {
-
-      //Conseguimos el tiempo del forecast
-      const forecastTime = DateTime.fromISO(forecast.time as any, { zone: city.timezone }).toMillis();
-
-      return forecastTime > now.toMillis() && forecastTime <= endOfTomorrow.toMillis(); //Devolvemos si el tiempo de ese 
-                                                                                        //forecast es mayor a ahora y si 
-                                                                                        // es menor o igual a mañana a las 11
-    });
-
-    this.hourlyWeather.set(filteredForecast);
+    //Obtenemos el tiempo de los días de la semana
+    this.dailyWeather.set(
+      daily.time.map((time: Date, i: number): WeeklyWeatherData => {
+        const weatherData = this.weatherCodeService.getWeatherCode(daily.weather_code[i], true);
+        return {
+          day: new Date(time).toLocaleDateString('en-US', {weekday: 'long'}),
+          weather: weatherData.weather,
+          max_temperature: Math.round(daily.temperature_2m_max[i]),
+          min_temperature: Math.round(daily.temperature_2m_min[i]),
+          icon: weatherData.icon
+        }
+      }));  
   }
 
-  //Funcion para cambiar el estado del toggle
-  selectOption(option: 'basic' | 'chart') {
-    this.toggleValue.set(option);
-  }
 }

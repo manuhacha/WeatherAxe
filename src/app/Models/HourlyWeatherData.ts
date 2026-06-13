@@ -1,4 +1,4 @@
-export interface HourlyWeather {
+export interface HourlyWeatherData {
     time: Date,
     weather: string,
     icon: string,
