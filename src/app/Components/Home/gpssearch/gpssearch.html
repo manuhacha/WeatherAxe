@@ -1,0 +1,8 @@
+<div class="w-11/12 lg:w-8/12 my-5 text-white text-center mx-auto relative">
+    <div class="flex items-center justify-center gap-2 text-sm">
+        <p>Or use your <a (click)="displayModal()" class="text-blue-600 font-bold hover:text-blue-500 cursor-pointer">current location</a></p>
+    </div>
+  @if (showModal()) {
+    <app-gps-modal class="w-full" (city)="receiveCity($event)" (showGPSModal)="receiveModalStatus($event)"></app-gps-modal>
+  }
+</div>
