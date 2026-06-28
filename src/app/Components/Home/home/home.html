@@ -6,6 +6,7 @@
     }
     @else {
       <app-search (city)="receiveCityData($event)"></app-search>
+      <app-gpssearch (city)="receiveCityData($event)"></app-gpssearch>
     }
     @if (isCurrentLoading()) {
       <div class="flex items-center justify-center h-6/12">
@@ -17,6 +18,9 @@
       <app-hourly-weather [data]="openMeteoApiResponse()" [city]="city()"></app-hourly-weather>
       <app-weekly-weather [data]="openMeteoApiResponse()"></app-weekly-weather>
     }
+  @if (showBanner()) {
+    <app-consent-banner (showConsent)="receiveConsentStatus($event)"></app-consent-banner>
+  }
   </main>
   <app-footer></app-footer>
 </div>

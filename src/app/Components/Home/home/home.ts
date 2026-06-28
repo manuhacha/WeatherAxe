@@ -11,10 +11,13 @@ import { CurrentWeather } from "../current-weather/current-weather";
 import { WeeklyWeather } from '../weekly-weather/weekly-weather';
 import { HourlyWeather } from '../hourly-weather/hourly-weather';
 import { GpsModal } from '../gps-modal/gps-modal';
+import { Gpssearch } from '../gpssearch/gpssearch';
+import { ConsentBanner } from '../../consent-banner/consent-banner';
+import { Consent } from '../../../Services/ConsentBanner/consent';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Footer, MatProgressSpinnerModule, Search, CurrentWeather, WeeklyWeather, HourlyWeather, GpsModal],
+  imports: [Header, Footer, MatProgressSpinnerModule, Search, CurrentWeather, WeeklyWeather, HourlyWeather, GpsModal, Gpssearch, ConsentBanner],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -29,9 +32,17 @@ export class Home {
   protected readonly openMeteoApiResponse = signal<OpenMeteoAPIResponse | null>(null);
   //Creamos una ciudad para enviar a nuestros componentes
   protected readonly city = signal<City | null>(null); 
+  //Creamos signal para mostrar Modal del GPS o no
   protected readonly showGPSModal = signal<boolean>(false);
+  //Creamos modal para mostrar banner de consentimiento o no 
+  protected readonly showBanner = signal<boolean>(true);
+  //Inyectamos nuestro servicio de consentimiento
+  consentService = inject(Consent);
 
   ngOnInit() {
+    //Mostramos el banner si no se ha aceptado o rechazado el consentimiento
+    this.showBanner.set(this.consentService.getConsent() ? false : true);
+
     //Cargamos la ciudad guardada en localstorage, si la hay
     const savedCity = localStorage.getItem('saved_city');
     if (savedCity) {
@@ -75,5 +86,10 @@ export class Home {
   //Recibimos el status del modal del componente hijo
   receiveModalStatus(status: boolean) {
     this.showGPSModal.set(status);
+  }
+
+  //Recibimos el status del banner de consentimiento
+  receiveConsentStatus(status: boolean) {
+    this.showBanner.set(status);
   }
 }
